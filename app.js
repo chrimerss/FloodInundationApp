@@ -42,7 +42,13 @@ var images = {
   "Brazos_20100907": retrieveImage("Brazos_20100907"),
   "Brazos_20130920": retrieveImage("Brazos_20130920"),
 };
-
+// var water= ee.Image("JRC/GSW1_2/GlobalSurfaceWater");
+// var visualization = {
+//           bands: ['occurrence'],
+//           min: 0.0,
+//           max: 100.0,
+//           palette: ['ffffff', 'ffbbbb', '0000ff']
+//             };
 // Demonstrates before/after imagery comparison with a variety of dates.
 function addLayerSelector(mapToChange, rightMap, defaultValue, position) {
   var label = ui.Label('Choose an event');
@@ -52,21 +58,15 @@ function addLayerSelector(mapToChange, rightMap, defaultValue, position) {
     mapToChange.layers().set(0, ui.Map.Layer(images[selection]));
     var center= set_center[selection];
     mapToChange.setCenter(center[0], center[1], 11)
-    var water= ee.Image("JRC/GSW1_2/GlobalSurfaceWater").clip(images[selection].geometry());
-    var visualization = {
-          bands: ['occurrence'],
-          min: 0.0,
-          max: 100.0,
-          palette: ['ffffff', 'ffbbbb', '0000ff']
-            };
-    rightMap.addLayer(water,visualization,"water occurence")
+
+    // rightMap.addLayer(water.clip(images[selection].geometry()),visualization,"water occurence")
     
   }
 
   // Configure a selection dropdown to allow the user to choose between images,
   // and set the map to update when a user makes a selection.
   var select = ui.Select({items: Object.keys(images), onChange: updateMap});
-  select.setValue(Object.keys(images)[defaultValue], true);
+  // select.setValue(Object.keys(images)[defaultValue], true);
 
   var controlPanel =
       ui.Panel({widgets: [label, select], style: {position: position}});
@@ -102,7 +102,8 @@ function retrieveImage(event) {
  
 // Create the right map, and have it display layer 1. right map shows normal water condition with Landsat NDWI
 var rightMap = ui.Map().setOptions('SATELLITE');
-rightMap.setControlVisibility(false);
+rightMap.setControlVisibility(true);
+var rightSelector= addLayerSelector(rightMap,rightMap, 0, 'top-right');
 
 // Create the left map, and have it display layer 0.
 var leftMap = ui.Map().setOptions('SATELLITE');
